@@ -1,0 +1,24 @@
+version: 2.1
+
+jobs:
+  build:
+    macos:
+      xocde: "11.1"
+    steps: # a series of commands to run
+      - checkout  # pull down code from your version control system.
+      - run:
+        # install npm dependencies of our application
+        name: Install node modules
+        command: npm install
+      - run:
+          # build our application
+          name: Build Application
+          command: xcodebuild
+      - run:
+          # compress Xcode's build output so that it can be stored as an artifact
+          name: Compress app for storage
+          command: zip -r app.zip build/Release/circleci-demo-macos.app
+      - store_artifacts: # store this build output. Read more: https://circleci.com/docs/2.0/artifacts/
+          path: app.zip
+          destination: app
+    
