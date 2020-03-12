@@ -1,32 +1,51 @@
-version: 2.1
+version: 2
 
 jobs:
-  build:
-    working_directory: ~/projetcs/RNCircleCI # directory where steps will run
-    docker: # run the steps with Docker
-      - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
-    steps: # a collection of executable commands
-      - checkout # special step to check out source code to working directory
+  # build:
+  #   working_directory: ~/projetcs/RNCircleCI # directory where steps will run
+  #   docker: # run the steps with Docker
+  #     - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
+  #   steps: # a collection of executable commands
+  #     - checkout # special step to check out source code to working directory
+  #     - run:
+  #         name: install-npm-modules
+  #         command: npm install
+  ios:
+    macos:
+      xcode: 11.1.0
+      # shell: /bin/bash --login -o pipefail
+    steps:
+      - checkout
       - run:
-          name: install-npm-modules
-          command: npm install
-    # macos:
-    #   xocde: "11.1"
-    # steps: # a series of commands to run
-    #   - checkout  # pull down code from your version control system.
-    #   - run:
-    #     # install npm dependencies of our application
-    #     name: Install node modules
-    #     command: npm install
-    #   - run:
-    #       # build our application
-    #       name: Build Application
-    #       command: xcodebuild
-    #   - run:
-    #       # compress Xcode's build output so that it can be stored as an artifact
-    #       name: Compress app for storage
-    #       command: zip -r app.zip build/Release/circleci-demo-macos.app
-    #   - store_artifacts: # store this build output. Read more: https://circleci.com/docs/2.0/artifacts/
-    #       path: app.zip
-    #       destination: app
-    
+          name: Build and run the ios app
+          command:  cd ios && fastlane scan
+          environment:
+            SCAN_DEVICE: iPhone 8
+            SCAN_SCHEME: RNCircleCI
+
+      - store-test-results:
+          path: test_output/report.xml
+      - store-artifacts:
+          path: ~/Library/Logs/scan
+          destination: scan-logs
+
+ 
+      # - run: npm install
+
+      # - restore_cache: # special step to restore the dependency cache
+      #     # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+      #     key: dependency-cache-{{ checksum "package-lock.json" }}
+
+      # - save_cache: # special step to save the dependency cache
+      #     key: dependency-cache-{{ checksum "package-lock.json" }}
+      #     paths:
+      #       - ./node_modules
+
+      # - run:
+      #     command: bundle install
+      #     working_directory: ios
+
+      # - save_cache:
+      #     key: bundle-v1-{{ checksum "ios/Gemfile.lock" }}-{{ arch }}
+      #     paths:
+      #       - vendor/bundle
