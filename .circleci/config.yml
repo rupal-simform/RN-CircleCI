@@ -33,13 +33,13 @@ workflows:
   version: 2
   node-android-ios:
     jobs:
-      - node
+      # - node
       # - android:
       #     requires:
       #       - node
       - ios:
-          requires:
-            - node
+          # requires:
+          #   - node
       # - run: npm install
 
       # - restore_cache: # special step to restore the dependency cache
